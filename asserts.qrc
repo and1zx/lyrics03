@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>asserts/close_hover.png</file>
+        <file>asserts/close.png</file>
+        <file>asserts/list.html</file>
+        <file>asserts/search.png</file>
+        <file>asserts/play.png</file>
+        <file>asserts/download.png</file>
+        <file>asserts/music.icns</file>
+        <file>asserts/pause.png</file>
+    </qresource>
+</RCC>
