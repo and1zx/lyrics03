@@ -23,8 +23,6 @@ SearchWidget::SearchWidget(QWidget *parent)
     createUI ();
     connectSignals ();
     loadTestData ();
-//    m_searchLine->setText ("汪峰");
-//        m_searchButton->click ();
 }
 
 bool SearchWidget::eventFilter(QObject *obj, QEvent *event)
@@ -137,26 +135,27 @@ void SearchWidget::recvList(QList<Item> items)
     }
     m_listWidget->blockSignals (false);
 }
-
-void SearchWidget::recvSaved(const QString &mp3Path, const QString &lrcPath)
+void SearchWidget::recvSaved(const QString &songName,const QString &singerName)
 {
-    qDebug() << "recvSaved:" << mp3Path << lrcPath;
+    qDebug() << "recvSaved:" << songName << singerName;
+    QString lrcName = songName +"-"+ singerName + ".lrc";
+    QString mp3Name = songName +"-"+ singerName + ".mp3";
     QList<QString> list;
-    list.append (mp3Path);
-    list.append (lrcPath);
+    list.append (lrcName);
+    list.append (mp3Name);
     list.append ("play");
     emit sendPlay (list);
 }
 
 void SearchWidget::handleSearch()
 {
+    qDebug() << "handleSearch";
     QString keyword = m_searchLine->text ().trimmed ();
     if (keyword.isEmpty ()) {
         qDebug() << "handleSearch :keyword empty";
         return;
     }
     m_listWidget->clear ();
-    qDebug() << "handleSearch";
     m_musicZz123->search(keyword);
 }
 
@@ -254,16 +253,14 @@ void SearchWidget::loadTestData()
         {"飞得更高", "汪峰", "zkkxx", "file2"},
         {"美丽世界的孤儿", "汪峰", "zkkxm", "file3"}
     };
-
-        recvList (items);
+    recvList (items);
 }
 
 void SearchWidget::onListItemClicked(QListWidgetItem *item,QObject *sender)
 {
         QVariant data = item->data(Qt::UserRole);
         Item it = data.value<Item>();
-        qDebug() << it.title << it.artist << it.id;
-//            m_musicZz123->getInfo (itemId);
+        qDebug() << "onListItemClicked:" << it.title << it.artist << it.id;
         if (m_currentItem != nullptr && m_currentItem != item) {
             QWidget *widget = qobject_cast<QWidget*>(m_listWidget->itemWidget (m_currentItem));
             QToolButton* playButton = widget->findChild<QToolButton*>("playButton");
@@ -275,35 +272,36 @@ void SearchWidget::onListItemClicked(QListWidgetItem *item,QObject *sender)
         QWidget *widget = qobject_cast<QWidget*>(m_listWidget->itemWidget (item));
         QToolButton* playButton = widget->findChild<QToolButton*>("playButton");
         if (sender == playButton) {
+            QList<QString> list;
             QString lrcName = it.title +"-"+ it.artist + ".lrc";
             QString mp3Name = it.title +"-"+ it.artist + ".mp3";
-            qDebug() << FileUtils::exists (lrcName);
+            list.append (lrcName);
+            list.append (mp3Name);
+            qDebug() << "lrcName:" << FileUtils::exists (lrcName);
+            qDebug() << "mp3Name:" << FileUtils::exists (mp3Name);
+            QString state = playButton->property("state").toString();
             if (!FileUtils::exists (mp3Name)) {
-                qDebug() << "不存在" << mp3Name;
-//                m_musicZz123->getInfo (it.id);
+                qDebug() << "mp3Name 不存在" << mp3Name;
+                playButton->setProperty("state", "play");
+                playButton->setIcon(QIcon(":/asserts/play.png"));
+                list.append ("pause");
+                m_musicZz123->sendSongInfo (it.id);
                 return;
             }
-            QList<QString> list;
-            list.append (mp3Name);
-            list.append (lrcName);
 
 
-            QString state = playButton->property("state").toString();
             if (state == "play") {
-            playButton->setProperty("state", "pause");
-            playButton->setIcon(QIcon(":/asserts/pause.png"));
-            list.append ("play");
-
-            // TODO: 播放歌曲
+                playButton->setProperty("state", "pause");
+                playButton->setIcon(QIcon(":/asserts/pause.png"));
+                list.append ("play");
+                // TODO: 播放歌曲
             } else {
-            playButton->setProperty("state", "play");
-            playButton->setIcon(QIcon(":/asserts/play.png"));
-            list.append ("pause");
-
-            // TODO: 暂停歌曲
+                playButton->setProperty("state", "play");
+                playButton->setIcon(QIcon(":/asserts/play.png"));
+                list.append ("pause");
+                // TODO: 暂停歌曲
             }
             emit sendPlay (list);
-
         }
 //        else if (button == downloadButton) {
 //            // TODO: 下载歌曲

@@ -86,6 +86,7 @@ void MusicZz123::sendSongLocation(const QUrl &url)
             qDebug() << "save mp3" << mp3Name;
             const QByteArray data = reply->readAll();
             save (mp3Name,data);
+            emit sendSaved(m_songName,m_singerName);
             reply->deleteLater();
         }
     });

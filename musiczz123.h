@@ -25,8 +25,7 @@ public:
     void search(const QString &keyword);
 signals:
     void sendList(QList<Item> items);
-    void sendSaved(const QString &mp3Path,const QString &lrcPath);
-
+    void sendSaved(const QString &songName,const QString &singerName);
 private slots:
     void onSongInfoReceived(QNetworkReply *reply);
     void onSongLocationReceived(QNetworkReply *reply);

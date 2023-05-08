@@ -22,7 +22,7 @@ public:
 
 private slots:
     void recvList(QList<Item> items);
-    void recvSaved(const QString &mp3Path,const QString &lrcPath);
+    void recvSaved(const QString &songName,const QString &singerName);
 
 signals:
     void sendPlay(const QList<QString> list);

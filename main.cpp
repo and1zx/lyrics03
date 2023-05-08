@@ -10,7 +10,6 @@
 
 #include "lyricparser.h"
 #include "desktoplyrics.h"
-#include "musicscraper.h"
 #include <QFile>
 
 #include <QRegularExpression>
@@ -24,7 +23,6 @@
 
 #include <iostream>
 
-#include "musiczz123.h"
 #include <searchwidget.h>
 #include "fileutils.h"
 
@@ -32,14 +30,6 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
-    MusicZz123 zz123;
-//    zz123.sendSongInfo ("vqdda");
-    zz123.search ("beyond");
-    return a.exec ();
-
-
-
 //    a.setApplicationName ("音乐播放器");
 //    a.setApplicationDisplayName ("音乐播放器");
     SearchWidget searchWidget;
@@ -65,12 +55,14 @@ int main(int argc, char *argv[])
         if (desktopLyrics.isHidden ()) {
             desktopLyrics.show ();
         }
-        QString mp3Path = FileUtils::getFilePath (list.at (0));//":/asserts/胭脂扣-梅艳芳.lrc"
-        QString lrcPath = FileUtils::getFilePath (list.at(1));
+        QString lrcPath = FileUtils::getFilePath (list.at (0));
+        QString mp3Path = FileUtils::getFilePath (list.at (1));
         QString playState = list.at(2);
         qDebug() << "connect sendPlay" << "mp3Path:"<<mp3Path<< lrcPath;
+        qDebug() << "playState" << playState;
         if (playState == "pause") {
             player.stop ();
+            return;
         }
         if (!lyricParser.loadFile (lrcPath)) {
             return;
