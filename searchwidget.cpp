@@ -10,6 +10,7 @@
 #include <QPropertyAnimation>
 #include <QMouseEvent>
 #include <QScrollBar>
+#include "db.h"
 
 SearchWidget::SearchWidget(QWidget *parent)
     : QWidget{parent},
@@ -81,6 +82,10 @@ void SearchWidget::recvList(QList<Item> items)
     m_listWidget->blockSignals (true);
     // 将每个结构体Item的信息添加到QListWidget中
     for (const auto& item : items) {
+
+        DB::getInstance ().insert (
+            item.title,item.artist,item.id,"zz123"
+            );
         QWidget* widget = new QWidget;
         QHBoxLayout* h_layout = new QHBoxLayout(widget);
         QVBoxLayout* v_layout = new QVBoxLayout();
@@ -143,7 +148,15 @@ void SearchWidget::recvSaved(const QString &songName,const QString &singerName)
     QList<QString> list;
     list.append (lrcName);
     list.append (mp3Name);
-    list.append ("play");
+
+    if (m_currentItem != nullptr) {
+        QWidget *widget = qobject_cast<QWidget*>(m_listWidget->itemWidget (m_currentItem));
+        QToolButton* playButton = widget->findChild<QToolButton*>("playButton");
+        playButton->setProperty("state", "pause");
+        playButton->setIcon(QIcon(":/asserts/pause.png"));
+        list.append ("play");
+    }
+
     emit sendPlay (list);
 }
 
@@ -238,7 +251,7 @@ void SearchWidget::loadTestData()
     // 创建结构体Item的QList作为数据源
     QList<Item> items = {
         {"想念真好想念真好想念真好1想念真好想念真好想念真好想2念真好想念真好想念真好想3念真好", "汪峰", "id1", "file1"},
-        {"春天里", "汪峰", "aksmsd", "file2"},
+        {"春天里", "汪峰", "aksmsd", "file3"},
         {"当我想你的时候", "汪峰", "akvkqa", "file2"},
         {"怒放的生命 《北京青年》电视剧插曲", "汪峰", "dvakv", "file2"},
         {"存在 电视剧《北京青年》片尾曲", "汪峰", "vavzzq", "file2"},

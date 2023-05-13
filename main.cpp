@@ -20,16 +20,51 @@
 #include <QUrl>
 #include <QJsonDocument>
 #include <QJsonObject>
-
+#include <QSystemTrayIcon>
+#include <QMenu>
+#include <QAction>
 #include <iostream>
 
 #include <searchwidget.h>
 #include "fileutils.h"
 
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    //创建菜单项
+    QAction* prevAction = new QAction("上一首");
+    QAction* nextAction = new QAction("下一首");
+    QAction* lyricAction = new QAction("显示歌词");
+    QAction* exitAction = new QAction("退出");
+
+    //创建菜单项
+    QMenu *menu = new QMenu();
+    menu->addAction (prevAction);
+    menu->addAction (nextAction);
+    menu->addSeparator ();
+    menu->addAction (lyricAction);
+    menu->addSeparator ();
+    menu->addAction (exitAction);
+    //创建托盘图标
+    QSystemTrayIcon trayIcon(QIcon(":/asserts/music.png"));
+//    trayIcon.setContextMenu (menu);
+    trayIcon.show ();
+    //系统托盘图标的clicked 信号
+    QObject::connect(&trayIcon, &QSystemTrayIcon::activated, [=](QSystemTrayIcon::ActivationReason reason){
+        qDebug() << reason;
+        if (reason == QSystemTrayIcon::Context) {
+            qDebug() << "显示菜单";
+//            menu->popup(QCursor::pos()); // 在鼠标位置显示菜单
+        }
+        if (reason == QSystemTrayIcon::Trigger) {
+            qDebug() << "不显示菜单";
+//            menu->hide(); // 隐藏菜单
+        }
+    });
+
+    QObject::connect (exitAction,&QAction::triggered, &a,&QApplication::quit);
+
 //    a.setApplicationName ("音乐播放器");
 //    a.setApplicationDisplayName ("音乐播放器");
     SearchWidget searchWidget;

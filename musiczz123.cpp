@@ -72,7 +72,7 @@ void MusicZz123::sendSongLocation(const QUrl &url)
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
     request.setHeader (QNetworkRequest::UserAgentHeader,"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/77.0.3865.90 Safari/537.36");
-    request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
+//    request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
     QNetworkReply* reply = m_manager->get(request);
     QObject::connect (reply,&QNetworkReply::finished,this,[=](){
         int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
@@ -95,7 +95,7 @@ void MusicZz123::sendSongLocation(const QUrl &url)
         int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         qDebug() << "mp3Url 重定向:" << url.toString () << "statusCode:" << statusCode;
         sendSongLocation(url);
-        reply->deleteLater();
+//        reply->deleteLater();
     });
 }
 

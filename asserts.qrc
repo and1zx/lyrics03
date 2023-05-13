@@ -8,5 +8,6 @@
         <file>asserts/download.png</file>
         <file>asserts/music.icns</file>
         <file>asserts/pause.png</file>
+        <file>asserts/music.png</file>
     </qresource>
 </RCC>
